@@ -1,0 +1,18 @@
+local Class = require(game:GetService("ReplicatedFirst").Libraries.Class)
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+
+local delegatedFunctions = ReplicatedStorage:FindFirstChild("Delegates") or Instance.new("Folder", ReplicatedStorage)
+delegatedFunctions.Name = "Delegates"
+
+local Delegate = Class()
+
+function Delegate:New(delegatedFunction)
+	self.Callback = Instance.new("RemoteEvent")
+	self.Callback.Parent = ReplicatedStorage.Delegates
+	self.Callback.OnServerEvent:Once(function(...) 
+		delegatedFunction(...)
+		self.Callback:Destroy()
+	end)
+end
+
+return Delegate
